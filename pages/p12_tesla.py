@@ -19,6 +19,58 @@ TELEGRAM_CONFIGURED = "ENTER" not in TELEGRAM_BOT_TOKEN
 st.title("🚀 Tesla & SpaceX — סוכן מעקב")
 st.caption("SEC EDGAR real-time | Volume Spikes | Insider Activity | Telegram Alerts")
 
+# ── Join Bot Banner ───────────────────────────────────────
+with st.container(border=True):
+    col_join, col_info = st.columns([1, 3])
+    with col_join:
+        st.link_button(
+            "📱 הצטרף להתראות Telegram",
+            "https://t.me/PBKStockAlertsBot",
+            type="primary",
+            use_container_width=True,
+        )
+    with col_info:
+        st.markdown("**קבל התראות אוטומטיות על:**")
+        st.caption("📊 Volume Spike ב-TSLA | 🚀 SpaceX S-1 עדכונים | 👤 Insider Form 4 | 📢 8-K Events")
+
+st.divider()
+
+# ── Auto-register new subscribers ────────────────────────
+with st.expander("⚙️ רישום מנוי חדש — אוטומטי"):
+    st.markdown("**שלב 1:** שלח לחבר: https://t.me/PBKStockAlertsBot")
+    st.markdown("**שלב 2:** הוא שולח Start ומקבל Chat ID")
+    new_id = st.text_input("הכנס Chat ID של המנוי החדש:", placeholder="למשל: 123456789")
+    new_name = st.text_input("שם (לזיהוי בלבד):", placeholder="למשל: ישראל ישראלי")
+
+    if st.button("➕ הוסף מנוי ושלח ברוך הבא", type="primary"):
+        if new_id and new_id.isdigit():
+            try:
+                from src.tesla_monitor import send_telegram, TELEGRAM_CHAT_IDS, TELEGRAM_BOT_TOKEN
+                import requests
+                # Send welcome message
+                welcome = (
+                    f"🎉 <b>ברוך הבא ל-PBK Stock Alerts!</b>\n\n"
+                    f"תקבל התראות על:\n"
+                    f"📊 Volume Spike ב-$TSLA\n"
+                    f"🚀 SpaceX S-1 עדכונים\n"
+                    f"👤 Form 4 Insider Activity\n"
+                    f"📢 8-K Material Events\n\n"
+                    f"המערכת פעילה ✅"
+                )
+                url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+                r = requests.post(url, json={"chat_id": new_id, "text": welcome, "parse_mode": "HTML"}, timeout=8)
+                if r.status_code == 200:
+                    st.success(f"✅ {new_name or new_id} נוסף ונשלחה הודעת ברוך הבא!")
+                    st.info(f"📌 כדי שיקבל התראות קבועות — הוסף את {new_id} לרשימה ב-src/tesla_monitor.py")
+                else:
+                    st.error(f"שגיאה: {r.text}")
+            except Exception as e:
+                st.error(f"שגיאה: {e}")
+        else:
+            st.warning("הכנס Chat ID תקין (מספרים בלבד)")
+
+st.divider()
+
 # ── Telegram status bar ───────────────────────────────────
 if TELEGRAM_CONFIGURED:
     st.success("✅ Telegram מחובר — תקבל התראות אוטומטיות")
