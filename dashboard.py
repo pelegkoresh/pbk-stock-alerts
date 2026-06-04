@@ -3,7 +3,7 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 pg = st.navigation([
-    st.Page("dashboard_main.py",             title="Whale Tracker",          icon="🐋", default=True),
+    st.Page("dashboard_main.py",             title="המשקיעים הגדולים",          icon="🐋",),
     st.Page("pages/p1_world.py",             title="סחורות עולמיות",          icon="🌍"),
     st.Page("pages/p2_seasonal.py",          title="מסחר עונתי",              icon="📈"),
     st.Page("pages/p6_live_commodities.py",  title="סחורות חיות Top 50",      icon="🔥"),
